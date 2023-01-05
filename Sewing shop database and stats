@@ -1,0 +1,28 @@
+--create a database for a sewing shop.
+
+CREATE TABLE shop (id integer primary key, category text, price numeric, description text, quantity integer);
+
+INSERT INTO shop VALUES (1, "thread", 2.99, "black", 10);
+INSERT INTO shop VALUES (2, "thread", 2.99, "white", 9);
+INSERT INTO shop VALUES (3, "thread", 2.99, "gray", 11);
+INSERT INTO shop VALUES (4, "thread", 2.99, "red", 7);
+INSERT INTO shop VALUES (5, "thread", 2.99, "blue", 4);
+INSERT INTO shop VALUES (6, "cotton", 7.99, "butterfly", 3);
+INSERT INTO shop VALUES (7, "cotton", 7.99, "dog", 5);
+INSERT INTO shop VALUES (8, "cotton", 7.99, "skulls", 2);
+INSERT INTO shop VALUES (9, "knit", 11.99, "rainbow", 4);
+INSERT INTO shop VALUES (10, "knit", 11.99, "black", 5);
+INSERT INTO shop VALUES (11, "knit", 11.99, "green", 3);
+INSERT INTO shop VALUES (12, "knit", 11.99, "leopard", 6);
+INSERT INTO shop VALUES (13, "notions", 5.99, "threader", 5);
+INSERT INTO shop VALUES (14, "notions", 14.99, "scissors", 7);
+INSERT INTO shop VALUES (15, "notions", 7.99, "seam ripper", 3);
+
+--display the database ordered by price.
+SELECT * FROM shop ORDER BY price desc;
+
+--what is the total quantity of items in stock at the shop?
+SELECT SUM(quantity) FROM shop;
+
+--create a list of all cotton and knit fabrics currently in stock.
+SELECT * FROM shop WHERE category IN ("cotton", "knit");
