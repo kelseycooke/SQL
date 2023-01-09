@@ -1,0 +1,142 @@
+/*My project was to create a table with a list of "famous people" and then to create additional tables with more information about them and then things they do. I chose to use several characters from the Harry Potter book series and show their occupations, which books they were first introduced, which books they died in, and which characters had romantic relationships with each other.*/
+
+
+--List of characters from the Harry Potter book series
+CREATE TABLE characters 
+    (id INTEGER PRIMARY KEY, 
+    name TEXT,
+    occupation_id INTEGER,
+    title_id INTEGER,
+    death_id INTEGER,
+    romance_id INTEGER);
+    
+INSERT INTO characters (name, occupation_id, title_id, romance_id)
+    VALUES ("Harry Potter", 1, 1, 20);
+INSERT INTO characters (name, occupation_id, title_id, romance_id)
+    VALUES ("Ron Weasley", 1, 1, 3);
+INSERT INTO characters (name, occupation_id, title_id, romance_id)
+    VALUES ("Hermione Granger", 1, 1, 2);
+INSERT INTO characters (name, occupation_id, title_id, death_id)
+    VALUES ("Albus Dumbledore", 3, 1, 6);
+INSERT INTO characters (name, occupation_id, title_id, death_id)
+    VALUES ("Severus Snape", 2, 1, 7);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Minerva McGonagall", 2, 1);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Neville Longbottom", 1, 1);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Arthur Weasley", 4, 1);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Draco Malfoy", 1, 1);
+INSERT INTO characters (name, occupation_id, title_id, death_id)
+    VALUES ("Bellatrix Lestrange", 5, 4, 7);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Peeves", 7, 1);
+INSERT INTO characters (name, occupation_id, title_id, death_id)
+    VALUES ("Dobby", 6, 2, 7);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Rita Skeeter", 9, 4);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Rubeus Hagrid", 10, 1);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Viktor Krum", 8, 4);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Luna Lovegood", 1, 5);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Lucius Malfoy", 5, 2);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Moaning Myrtle", 7, 2);
+INSERT INTO characters (name, occupation_id, title_id)
+    VALUES ("Filius Flitwick", 2, 1);
+INSERT INTO characters (name, occupation_id, title_id, romance_id)
+    VALUES ("Ginny Weasley", 1, 1, 1);
+
+
+--Titles of all of the Harry Potter books
+CREATE TABLE titles
+    (id INTEGER PRIMARY KEY,
+    name TEXT);
+
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Sorcerer's Stone");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Chamber of Secrets");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Prisoner of Azkaban");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Goblet of Fire");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Order of the Phoenix");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Half-Blood Prince");
+INSERT INTO titles (name)
+    VALUES ("Harry Potter and the Deathly Hallows");
+
+
+--Occupations of the characters in Harry Potter
+CREATE TABLE occupations
+    (id INTEGER PRIMARY KEY,
+    occupation TEXT);
+
+INSERT INTO occupations (occupation)
+    VALUES ("student");
+INSERT INTO occupations (occupation)
+    VALUES ("professor");
+INSERT INTO occupations (occupation)
+    VALUES ("headmaster");
+INSERT INTO occupations (occupation)
+    VALUES ("ministry");
+INSERT INTO occupations (occupation)
+    VALUES ("death eater");
+INSERT INTO occupations (occupation)
+    VALUES ("house elf");
+INSERT INTO occupations (occupation)
+    VALUES ("ghost");
+INSERT INTO occupations (occupation)
+    VALUES ("quidditch player");
+INSERT INTO occupations (occupation)
+    VALUES ("journalist");
+INSERT INTO occupations (occupation)
+    VALUES ("gamekeeper");
+    
+
+--show each character's name, occupation, and title of the book in which they first appeared.
+
+SELECT characters.name, occupations.occupation, titles.name AS "title"
+    FROM characters
+    JOIN occupations
+    ON occupations.id=characters.occupation_id
+    JOIN titles
+    ON characters.title_id=titles.id
+    ORDER BY occupations.occupation ASC;
+
+
+--show the names of only the students and the title of the book in which they first appeared.
+
+SELECT c.name AS "student_name", t.name AS "title"
+    FROM characters c
+    JOIN occupations o
+    ON o.id=c.occupation_id
+    JOIN titles t
+    ON c.title_id=t.id
+    WHERE o.occupation="student"
+    ORDER BY t.id ASC;
+
+
+--which characters died during the book series and in which book? If the character did not die during the book series, the title should show as NULL.
+
+SELECT characters.name, titles.name AS "title"
+    FROM characters
+    LEFT OUTER JOIN titles
+    ON characters.death_id=titles.id
+    ORDER BY titles.id desc;
+    
+    
+--which characters had romantic relationships with one another?
+
+SELECT characters.name, r.name
+    FROM characters
+    JOIN characters r
+    ON characters.id=r.romance_id
+    ORDER BY characters.name;
+
