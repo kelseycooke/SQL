@@ -1,4 +1,4 @@
-/*My project was to create a table with a list of "famous people" and then to create additional tables with more information about them and then things they do. I chose to use several characters from the Harry Potter book series and show their occupations, which books they were first introduced, which books they died in, and which characters had romantic relationships with each other.*/
+/*My project was to create a table with a list of "famous people" and then to create additional tables with more information about them and the things they do. I chose to use several characters from the Harry Potter book series and create queries to show their occupations, which books they were first introduced, which books they died in, and which characters had romantic relationships with each other.*/
 
 
 --List of characters from the Harry Potter book series
