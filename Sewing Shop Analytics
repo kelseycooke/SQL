@@ -1,4 +1,4 @@
---create a database for a sewing shop.
+--create a database for a sewing shop that includes the items that are sold, prices, and inventory.
 
 CREATE TABLE shop (id integer primary key, category text, price numeric, description text, quantity integer);
 
