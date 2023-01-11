@@ -83,3 +83,17 @@ SELECT artist_name, track_name
 SELECT song_key, COUNT(track_name)
     FROM BIT_DB.Spotifydata
     GROUP BY song_key;
+
+
+/*Use a CTE to create a temporary table to calculate the average popularity for the artists in the Spotify data table. Then, for every artist with an average popularity of 90 or above, show their name, their average popularity, and label them as a “Top Star”.*/
+
+WITH tempTable AS (
+    SELECT s.artist_name, AVG(s.popularity) AS avg_pop
+    FROM Spotifydata s
+    GROUP BY s.artist_name
+    )
+    
+SELECT artist_name , avg_pop, "Top Star" AS tag
+    FROM tempTable
+    WHERE avg_pop>=90;
+    
