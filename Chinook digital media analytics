@@ -1,0 +1,255 @@
+--Working with a dataset called chinook, which represents a digital media store and includes tables for artists, albums, media tracks, invoices, and customers. Answer the following queries:
+
+--1. Show Customers (their full names, customer ID, and country) who are not in the US.
+
+SELECT firstname,
+       lastname,
+       customerid,
+       country
+  FROM customers
+ WHERE country <> "USA";
+ 
+
+-- 2. Show only the Customers from Brazil.
+
+SELECT firstname,
+       lastname,
+       customerid,
+       country
+  FROM customers
+ WHERE country = "Brazil";
+  
+ 
+-- 3. Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT customers.firstname,
+       customers.lastname,
+       invoices.invoiceid,
+       invoices.invoicedate,
+       invoices.BillingCountry
+  FROM customers
+       JOIN
+       invoices ON customers.customerid = invoices.CustomerId
+ WHERE customers.country = "Brazil";
+ 
+
+-- 4. Show the Employees who are Sales Agents.
+
+SELECT employeeid,
+       lastname,
+       firstname,
+       title
+  FROM employees
+ WHERE title LIKE "%Agent";
+ 
+
+-- 5. Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT billingcountry
+  FROM invoices
+ GROUP BY billingcountry;
+ 
+
+-- 6. Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+
+SELECT i.invoiceid,
+       e.firstname,
+       e.lastname
+  FROM invoices i
+       JOIN
+       customers c ON i.customerid = c.customerid
+       JOIN
+       employees e ON c.supportrepid = e.employeeid
+       
+
+;-- 7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT i.total,
+       c.firstname,
+       c.lastname,
+       c.country,
+       e.firstname,
+       e.lastname
+  FROM invoices i
+       JOIN
+       customers c ON i.customerid = c.customerid
+       JOIN
+       employees e ON c.supportrepid = e.employeeid;
+       
+
+-- 8. How many Invoices were there in 2009?
+
+SELECT COUNT(invoiceid) 
+  FROM invoices
+ WHERE invoicedate LIKE "2009%";
+ 
+
+-- 9. What are the total sales for 2009?
+
+SELECT ROUND(SUM(total) ) 
+  FROM invoices
+ WHERE invoicedate LIKE "2009%";
+ 
+
+-- 10. Write a query that includes the purchased track name with each invoice line ID.
+
+SELECT t.name,
+       ii.invoicelineid
+  FROM tracks t
+       JOIN
+       invoice_items ii ON t.trackid = ii.trackid;
+       
+
+-- 11. Write a query that includes the purchased track name AND artist name with each invoice line ID.
+
+SELECT t.name AS [track name],
+       ar.name AS [artist name],
+       ii.invoicelineid
+  FROM tracks t
+       JOIN
+       invoice_items ii ON t.trackid = ii.trackid
+       JOIN
+       albums al ON t.albumid = al.albumid
+       JOIN
+       artists ar ON al.artistid = ar.artistid;
+       
+
+-- 12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT t.name AS [track name],
+       a.title AS [album name],
+       m.name AS [media type],
+       g.name AS genre
+  FROM tracks t
+       JOIN
+       albums a ON t.albumid = a.albumid
+       JOIN
+       media_types m ON t.mediatypeid = m.mediatypeid
+       JOIN
+       genres g ON g.genreid = t.genreid;
+       
+
+-- 13. Show the total sales made by each sales agent.
+
+SELECT ROUND(SUM(i.total) ),
+       e.firstname,
+       e.lastname
+  FROM invoices i
+       JOIN
+       customers c ON i.customerid = c.customerid
+       JOIN
+       employees e ON c.supportrepid = e.employeeid
+ WHERE e.title LIKE "sales%"
+ GROUP BY e.lastname;
+ 
+
+-- 14. Which sales agent made the most dollars in sales in 2009?
+
+SELECT e.firstname,
+       e.lastname
+  FROM invoices i
+       JOIN
+       customers c ON i.customerid = c.customerid
+       JOIN
+       employees e ON c.supportrepid = e.employeeid
+ WHERE i.invoicedate LIKE "2009%" AND 
+       e.title LIKE "sales%"
+ GROUP BY e.lastname
+ ORDER BY SUM(i.total) DESC
+ LIMIT 1;
+ 
+
+-- 15. Which genre has the highest total sales?
+
+SELECT g.name
+  FROM genres g
+       JOIN
+       tracks t ON g.genreid = t.genreid
+       JOIN
+       invoice_items ii ON t.trackid = ii.trackid
+       JOIN
+       invoices i ON ii.invoiceid = i.invoiceid
+ GROUP BY g.name
+ ORDER BY ROUND(SUM(i.total) ) DESC
+ LIMIT 1;
+ 
+
+-- 16. which tracks are on at least 5 different playlists and who is the artist for each?
+
+SELECT t.name AS track,
+       ar.name AS artist
+  FROM tracks t
+       JOIN
+       playlist_track pt ON t.trackid = pt.trackid
+       JOIN
+       playlists p ON pt.playlistid = p.playlistid
+       JOIN
+       albums al ON t.albumid = al.albumid
+       JOIN
+       artists ar ON al.artistid = ar.artistid
+ GROUP BY t.name
+HAVING COUNT(t.name) >= 5;
+
+
+-- 17. what are the top 25 tracks sold in the USA by total sales amount and who is the artist?
+
+SELECT t.name AS track,
+       ar.name AS artist
+  FROM tracks t
+       JOIN
+       invoice_items ii ON t.trackid = ii.trackid
+       JOIN
+       invoices i ON ii.invoiceid = i.invoiceid
+       JOIN
+       albums a ON t.albumid = a.albumid
+       JOIN
+       artists ar ON a.artistid = ar.artistid
+ WHERE i.billingcountry = "USA"
+ GROUP BY t.name
+ ORDER BY (sum(i.total) ) DESC
+ LIMIT 25;
+
+
+--18. which artist has the most albums?
+
+SELECT ar.name
+FROM artists ar
+JOIN albums al
+ON ar.artistid=al.artistid
+GROUP BY ar.name
+ORDER BY COUNT (ar.name) DESC
+LIMIT 1;
+
+
+--19. which country had the highest sales in 2012?
+
+SELECT billingcountry
+FROM invoices
+WHERE invoicedate LIKE "2012%"
+GROUP BY billingcountry
+ORDER BY SUM(total) DESC
+LIMIT 1;
+
+
+--20. which tracks were from TV shows or soundtracks?
+
+SELECT t.name AS "track", g.name AS "genre"
+FROM tracks t
+JOIN genres g
+ON t.genreid=g.genreid
+WHERE g.name="TV Shows" OR g.name="Soundtrack";
+
+
+--21. Which albums sold in 2012 were classial?
+
+SELECT a.title
+FROM albums a
+JOIN tracks t
+ON a.albumid=t.albumid
+JOIN genres g
+ON t.genreid=g.genreid
+JOIN invoice_items ii
+ON t.trackid=ii.trackid
+JOIN invoices i
+ON i.invoiceid=ii.invoiceid
+WHERE g.name="Classical" AND i.invoicedate LIKE "2012%";
